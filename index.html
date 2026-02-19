@@ -7,7 +7,9 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { background: linear-gradient(180deg, #f5f7fa 0%, #c3cfe2 100%); min-height: 100vh; }
-        .ios-card { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); border-radius: 24px; box-shadow: 0 8px 32px rgba(31, 38, 135, 0.07); }
+        .ios-card { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); border-radius: 24px; box-shadow: 0 8px 32px rgba(31, 38, 135, 0.07); cursor: pointer; transition: all 0.2s; }
+        .ios-card:hover { transform: translateY(-2px); background: white; }
+        .ios-card:active { transform: scale(0.95); }
     </style>
 </head>
 <body class="p-6 flex flex-col items-center">
@@ -16,49 +18,67 @@
             <div class="w-24 h-24 bg-white rounded-3xl flex items-center justify-center shadow-xl mb-6">
                 <span class="text-5xl">🎧</span>
             </div>
-            <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight">Soundcore Liberty 4</h1>
+            <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight" id="gear-name">Soundcore Liberty 4</h1>
+            <p class="text-xs text-slate-400 mt-2">💡 點擊下方卡片可修改數據</p>
         </div>
 
         <div class="grid grid-cols-2 gap-4 mb-6">
-            <div class="ios-card p-5">
+            <div class="ios-card p-5" onclick="updatePrice()">
                 <p class="text-[10px] font-bold text-blue-500 uppercase tracking-widest mb-1">Total Price</p>
-                <p class="text-xl font-bold text-slate-800">NT$ 3518</p>
+                <p class="text-xl font-bold text-slate-800">NT$ <span id="display-price">3518</span></p>
             </div>
             <div class="ios-card p-5 border-2 border-blue-400">
                 <p class="text-[10px] font-bold text-blue-500 uppercase tracking-widest mb-1">Daily Cost</p>
                 <p class="text-xl font-bold text-blue-600">NT$ <span id="daily-cost">--</span></p>
             </div>
-            <div class="ios-card p-5">
+            <div class="ios-card p-5" onclick="updateDate()">
                 <p class="text-[10px] font-bold text-blue-500 uppercase tracking-widest mb-1">Purchase Date</p>
-                <p class="text-sm font-semibold text-slate-700">2023-04-18</p>
+                <p class="text-sm font-semibold text-slate-700" id="display-date">2023-04-18</p>
             </div>
             <div class="ios-card p-5">
                 <p class="text-[10px] font-bold text-blue-500 uppercase tracking-widest mb-1">Days Owned</p>
                 <p class="text-sm font-semibold text-slate-700"><span id="days-count">--</span> Days</p>
             </div>
         </div>
-
-        <div class="text-center text-slate-400 text-xs font-medium">
-            <p>最後更新：<span id="update-time"></span></p>
-        </div>
     </div>
 
     <script>
-        const buyDate = new Date('2023-04-18');
-        const price = 3518;
-        const today = new Date();
+        // 初始化數據 (優先讀取暫存，沒有就用預設)
+        let price = localStorage.getItem('gearPrice') || 3518;
+        let dateStr = localStorage.getItem('gearDate') || '2023-04-18';
 
-        // 計算天數 (ms 轉天)
-        const diffInMs = today - buyDate;
-        const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
-        
-        // 計算成本
-        const costPerDay = (price / diffInDays).toFixed(1);
+        function calculate() {
+            const buyDate = new Date(dateStr);
+            const today = new Date();
+            const diffInMs = today - buyDate;
+            const diffInDays = Math.max(1, Math.floor(diffInMs / (1000 * 60 * 60 * 24)));
+            const costPerDay = (price / diffInDays).toFixed(1);
 
-        // 寫入畫面
-        document.getElementById('days-count').innerText = diffInDays;
-        document.getElementById('daily-cost').innerText = costPerDay;
-        document.getElementById('update-time').innerText = today.toLocaleDateString();
+            document.getElementById('display-price').innerText = price;
+            document.getElementById('display-date').innerText = dateStr;
+            document.getElementById('days-count').innerText = diffInDays;
+            document.getElementById('daily-cost').innerText = costPerDay;
+        }
+
+        function updatePrice() {
+            const newPrice = prompt("請輸入購買總價 (NT$):", price);
+            if (newPrice && !isNaN(newPrice)) {
+                price = newPrice;
+                localStorage.setItem('gearPrice', price);
+                calculate();
+            }
+        }
+
+        function updateDate() {
+            const newDate = prompt("請輸入購買日期 (YYYY-MM-DD):", dateStr);
+            if (newDate && !isNaN(Date.parse(newDate))) {
+                dateStr = newDate;
+                localStorage.setItem('gearDate', dateStr);
+                calculate();
+            }
+        }
+
+        calculate();
     </script>
 </body>
 </html>
