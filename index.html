@@ -3,75 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>我的裝備庫 Pro</title>
+    <title>SVT Carat Gear Tracker</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background: #f2f2f7; min-height: 100vh; font-family: -apple-system, system-ui, sans-serif; }
-        .ios-card { background: white; border-radius: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        .modal { background: rgba(0,0,0,0.4); backdrop-filter: blur(8px); }
-        input, select { -webkit-appearance: none; }
+        /* SVT 官方色：Rose Quartz (#F7CAC9) & Serenity (#92A8D1) */
+        body { 
+            background: linear-gradient(135deg, #F7CAC9 0%, #92A8D1 100%); 
+            min-height: 100vh; 
+            font-family: -apple-system, system-ui, sans-serif; 
+        }
+        .ios-card { 
+            background: rgba(255, 255, 255, 0.85); 
+            backdrop-filter: blur(10px);
+            border-radius: 24px; 
+            box-shadow: 0 8px 20px rgba(146, 168, 209, 0.2); 
+        }
+        .summary-card {
+            background: linear-gradient(90deg, rgba(247,202,201,0.6) 0%, rgba(146,168,209,0.6) 100%);
+            border: 1px solid rgba(255,255,255,0.5);
+        }
+        .modal { background: rgba(0,0,0,0.3); backdrop-filter: blur(5px); }
     </style>
 </head>
-<body class="p-4 pb-24">
+<body class="p-4 pb-24 text-slate-700">
     <div class="max-w-md mx-auto">
-        <header class="flex justify-between items-end mb-8 px-2">
-            <div>
-                <h1 class="text-3xl font-bold text-gray-900">我的裝備</h1>
-                <p class="text-gray-400 text-sm">按頻率計算的真實成本</p>
-            </div>
+        <header class="flex flex-col mb-6 px-2 text-white">
+            <h1 class="text-3xl font-black drop-shadow-sm">我的裝備清單</h1>
+            <p class="text-xs opacity-80 tracking-widest uppercase">Rose Quartz & Serenity Edition</p>
         </header>
+
+        <div id="summary-area" class="ios-card summary-card p-5 mb-8 text-center">
+            <p class="text-[10px] font-bold text-slate-500 uppercase tracking-tighter mb-1">總資產價值</p>
+            <p class="text-3xl font-black text-slate-800">NT$ <span id="total-assets">0</span></p>
+        </div>
 
         <div id="gear-list" class="space-y-6"></div>
     </div>
 
-    <button onclick="toggleModal(true)" class="fixed bottom-8 right-8 bg-blue-600 text-white w-14 h-14 rounded-full shadow-lg text-3xl flex items-center justify-center z-40">+</button>
+    <button onclick="toggleModal(true)" class="fixed bottom-8 right-8 bg-white text-[#92A8D1] w-14 h-14 rounded-full shadow-xl text-3xl flex items-center justify-center z-40">💎</button>
 
     <div id="modal" class="modal fixed inset-0 hidden flex items-center justify-center p-4 z-50">
-        <div class="bg-white w-full max-w-sm rounded-3xl p-6 shadow-2xl">
-            <h2 class="text-xl font-bold mb-5 text-center">新增裝備</h2>
+        <div class="bg-white/95 w-full max-w-sm rounded-[32px] p-8 shadow-2xl">
+            <h2 class="text-xl font-bold mb-6 text-center text-[#92A8D1]">添加新裝備</h2>
             <div class="space-y-4">
-                <div>
-                    <label class="text-xs text-gray-400 ml-1">名稱 (會自動匹配圖示)</label>
-                    <input id="in-name" oninput="autoEmoji(this.value)" type="text" placeholder="例如：iPhone" class="w-full p-3 bg-gray-100 rounded-xl outline-none mt-1">
-                </div>
+                <input id="in-name" oninput="autoEmoji(this.value)" type="text" placeholder="裝備名稱" class="w-full p-4 bg-gray-50 rounded-2xl outline-none focus:ring-2 ring-[#F7CAC9]/50 transition-all">
                 <div class="flex gap-2">
-                    <div class="w-20">
-                        <label class="text-xs text-gray-400 ml-1">圖示</label>
-                        <input id="in-emoji" type="text" placeholder="🔍" class="w-full p-3 bg-gray-100 rounded-xl text-center outline-none mt-1">
-                    </div>
-                    <div class="flex-1">
-                        <label class="text-xs text-gray-400 ml-1">購買金額</label>
-                        <input id="in-price" type="number" placeholder="NT$" class="w-full p-3 bg-gray-100 rounded-xl outline-none mt-1">
-                    </div>
+                    <input id="in-emoji" type="text" placeholder="🔍" class="w-20 p-4 bg-gray-50 rounded-2xl text-center outline-none">
+                    <input id="in-price" type="number" placeholder="購買金額 NT$" class="flex-1 p-4 bg-gray-50 rounded-2xl outline-none focus:ring-2 ring-[#F7CAC9]/50">
                 </div>
                 <div class="grid grid-cols-2 gap-2">
-                    <div>
-                        <label class="text-xs text-gray-400 ml-1">購買日期</label>
-                        <input id="in-date" type="date" class="w-full p-3 bg-gray-100 rounded-xl outline-none mt-1 text-sm">
-                    </div>
-                    <div>
-                        <label class="text-xs text-gray-400 ml-1">使用頻率</label>
-                        <select id="in-freq" class="w-full p-3 bg-gray-100 rounded-xl outline-none mt-1 text-sm">
-                            <option value="1">每天使用</option>
-                            <option value="0.43">每週使用 (3次)</option>
-                            <option value="0.14">每週使用 (1次)</option>
-                            <option value="0.03">每月使用 (1次)</option>
-                        </select>
-                    </div>
+                    <input id="in-date" type="date" class="p-4 bg-gray-50 rounded-2xl outline-none text-sm">
+                    <select id="in-freq" class="p-4 bg-gray-50 rounded-2xl outline-none text-sm appearance-none">
+                        <option value="1">每天使用</option>
+                        <option value="0.43">每週 3 次</option>
+                        <option value="0.14">每週 1 次</option>
+                        <option value="0.03">每月 1 次</option>
+                    </select>
                 </div>
             </div>
-            <div class="flex gap-3 mt-8">
-                <button onclick="toggleModal(false)" class="flex-1 p-3 text-gray-400 font-medium">取消</button>
-                <button onclick="addGear()" class="flex-1 p-3 bg-blue-600 text-white rounded-xl font-bold">儲存裝備</button>
+            <div class="flex gap-4 mt-8">
+                <button onclick="toggleModal(false)" class="flex-1 py-4 text-gray-400 font-bold">取消</button>
+                <button onclick="addGear()" class="flex-1 py-4 bg-gradient-to-r from-[#F7CAC9] to-[#92A8D1] text-white rounded-2xl font-black shadow-lg">確認加入</button>
             </div>
         </div>
     </div>
 
     <script>
         const emojiMap = {
-            '耳機': '🎧', '聽': '🎧', '手機': '📱', '電話': '📱', '電腦': '💻', '筆電': '💻',
-            '相機': '📷', '拍照': '📷', '手錶': '⌚', '錶': '⌚', '鞋': '👟', '衣': '👕',
-            '車': '🚗', '機車': '🛵', '咖啡': '☕', '包': '🎒', '眼鏡': '👓', '遊戲': '🎮'
+            '耳機': '🎧', '手機': '📱', '電腦': '💻', '相機': '📷', '手錶': '⌚', '鞋': '👟', '衣': '👕', '遊戲': '🎮', 'SV': '💎', '17': '💎'
         };
 
         let gears = JSON.parse(localStorage.getItem('myGearsV2')) || [];
@@ -79,51 +78,50 @@
         function autoEmoji(val) {
             const emojiInput = document.getElementById('in-emoji');
             for (let key in emojiMap) {
-                if (val.includes(key)) {
-                    emojiInput.value = emojiMap[key];
-                    return;
-                }
+                if (val.includes(key)) { emojiInput.value = emojiMap[key]; return; }
             }
             if(!emojiInput.value) emojiInput.value = '📦';
         }
 
         function calculateDays(dateStr, freq) {
             const daysPassed = Math.max(1, Math.floor((new Date() - new Date(dateStr)) / (1000 * 60 * 60 * 24)));
-            // 真實使用次數 = 總天數 * 頻率
             return { totalDays: daysPassed, usedTimes: Math.max(1, daysPassed * freq) };
         }
 
         function render() {
             const list = document.getElementById('gear-list');
-            list.innerHTML = gears.length ? '' : '<p class="text-center text-gray-400 mt-20">點擊右下角新增裝備</p>';
+            let totalVal = 0;
+            list.innerHTML = gears.length ? '' : '<div class="text-center text-white/60 mt-20">還沒有裝備嗎？<br>點擊鑽石按鈕開始吧 Say the name!</div>';
             
             gears.forEach((item, index) => {
                 const { totalDays, usedTimes } = calculateDays(item.date, item.freq || 1);
                 const costPerUse = (item.price / usedTimes).toFixed(1);
+                totalVal += Number(item.price);
                 
                 list.innerHTML += `
-                    <div class="ios-card p-5 relative">
-                        <button onclick="deleteGear(${index})" class="absolute top-4 right-4 text-gray-300">✕</button>
-                        <div class="flex items-center gap-4 mb-5">
-                            <div class="text-4xl bg-slate-50 w-16 h-16 flex items-center justify-center rounded-2xl shadow-inner">${item.emoji}</div>
+                    <div class="ios-card p-6 relative">
+                        <button onclick="deleteGear(${index})" class="absolute top-4 right-5 text-gray-300 hover:text-red-300 transition-colors">✕</button>
+                        <div class="flex items-center gap-4 mb-6">
+                            <div class="text-4xl bg-white w-16 h-16 flex items-center justify-center rounded-[20px] shadow-sm">${item.emoji}</div>
                             <div>
-                                <h3 class="text-xl font-bold text-gray-800">${item.name}</h3>
-                                <p class="text-[10px] text-blue-500 font-bold tracking-widest uppercase opacity-60">${item.date} 購買</p>
+                                <h3 class="text-xl font-bold text-slate-700">${item.name}</h3>
+                                <p class="text-[10px] text-[#92A8D1] font-black tracking-widest uppercase">${item.date} 購買</p>
                             </div>
                         </div>
-                        <div class="grid grid-cols-2 gap-3">
-                            <div class="bg-blue-50 p-4 rounded-2xl border border-blue-100">
-                                <p class="text-[10px] font-black text-blue-400 uppercase mb-1">每次使用成本</p>
-                                <p class="text-xl font-black text-blue-700">NT$ ${costPerUse}</p>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="bg-[#F7CAC9]/20 p-4 rounded-2xl border border-[#F7CAC9]/30">
+                                <p class="text-[10px] font-black text-[#F7CAC9] uppercase mb-1">每次使用成本</p>
+                                <p class="text-xl font-black text-slate-700">NT$ ${costPerUse}</p>
                             </div>
-                            <div class="bg-gray-50 p-4 rounded-2xl">
-                                <p class="text-[10px] font-bold text-gray-400 uppercase mb-1">持有天數</p>
-                                <p class="text-xl font-bold text-gray-600">${totalDays} <span class="text-xs">Days</span></p>
+                            <div class="bg-[#92A8D1]/10 p-4 rounded-2xl border border-[#92A8D1]/20">
+                                <p class="text-[10px] font-black text-[#92A8D1] uppercase mb-1">持有天數</p>
+                                <p class="text-xl font-black text-slate-700">${totalDays} <span class="text-xs opacity-50">D</span></p>
                             </div>
                         </div>
                     </div>
                 `;
             });
+            document.getElementById('total-assets').innerText = totalVal.toLocaleString();
             localStorage.setItem('myGearsV2', JSON.stringify(gears));
         }
 
@@ -148,7 +146,7 @@
         }
 
         function deleteGear(index) {
-            if(confirm('確定刪除？')) {
+            if(confirm('確定要捨棄這個寶貝嗎？')) {
                 gears.splice(index, 1);
                 render();
             }
