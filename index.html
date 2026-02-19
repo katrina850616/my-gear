@@ -1,16 +1,44 @@
-<script>
-  function calculate() {
-    const price = document.getElementById('price').value;
-    const date = new Date(document.getElementById('buyDate').value);
-    const today = new Date();
-    
-    // 計算天數差
-    const diffTime = Math.abs(today - date);
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
-    
-    // 計算每日成本
-    const dailyCost = (price / diffDays).toFixed(1);
-    
-    // 渲染到畫面上...
-  }
-</script>
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的裝備 - 每日成本</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background: linear-gradient(to bottom, #e2e8f0, #ffffff); min-height: 100vh; }
+        .glass-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); border-radius: 20px; }
+    </style>
+</head>
+<body class="p-6 font-sans text-gray-700">
+    <div class="max-w-md mx-auto">
+        <div class="flex flex-col items-center mb-8">
+            <div class="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                <span class="text-4xl">🎧</span>
+            </div>
+            <h1 class="text-3xl font-bold text-gray-800">Soundcore Liberty4</h1>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+            <div class="glass-card p-4 shadow-sm">
+                <p class="text-xs text-gray-400 flex items-center"><span class="mr-1">💰</span> 總價</p>
+                <p class="text-xl font-semibold mt-1">NT$ 3518.0</p>
+            </div>
+            <div class="glass-card p-4 shadow-sm border-2 border-blue-200">
+                <p class="text-xs text-gray-400 flex items-center"><span class="mr-1">📅</span> 每日成本</p>
+                <p class="text-xl font-semibold mt-1 text-blue-600">NT$ 3.4</p>
+            </div>
+            <div class="glass-card p-4 shadow-sm">
+                <p class="text-xs text-gray-400">📅 購買日期</p>
+                <p class="text-md font-medium mt-1">2023-04-18</p>
+            </div>
+            <div class="glass-card p-4 shadow-sm">
+                <p class="text-xs text-gray-400">🕒 天數</p>
+                <p class="text-md font-medium mt-1">1038</p>
+            </div>
+        </div>
+
+        <p class="text-center mt-10 text-gray-400 text-sm">由 GitHub Pages 強力驅動</p>
+    </div>
+</body>
+</html>
